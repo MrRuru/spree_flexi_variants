@@ -11,16 +11,26 @@
   class_str='ad-hoc-option-select'
   class_str += ' required' if ahot.is_required
   class_str += ' ad_hoc' if !@product.ad_hoc_variant_exclusions.empty? %>
-   <% # render a custom partial based on the option type name? %>
-
-   <% if lookup.exists?("products/ad_hoc_options/#{ot.name}",nil,true) %>
-     <%= render :partial => "products/ad_hoc_options/#{ot.name}", :locals => {:option_type=>ahot} %> 
-   <% else %>
-     <label><%= ot.presentation %></label>
-     <%= select_tag "ad_hoc_option_values[#{ahot.id}]",
-             options_for_select(ad_hoc_option_value_options(ahot.option_values)), 
-             :include_blank => 'None', :class => class_str %>
-   <% end %>
+  <% # render a custom partial based on the option type name? %>
+  
+  <% if lookup.exists?("products/ad_hoc_options/#{ot.name}",nil,true) %>
+    <%= render :partial => "products/ad_hoc_options/#{ot.name}", :locals => {:option_type=>ahot} %> 
+  <% else %>
+    <label><%= ot.presentation %></label>
+    <% if ahot.allow_multiple_choice %>
+      <% ahot.option_values.each do |ah_ov| %>
+        <label>
+        <%= check_box_tag "ad_hoc_option_values[#{ahot.id}][]", ah_ov.id.to_s, false, :class => class_str %>
+        <span class="variant-description"><%= "#{ah_ov.option_value.presentation}"%></span>
+        <span class="price diff"><%= "(#{plus_or_minus ah_ov} #{format_price ah_ov.price_modifier.abs})"%></span>
+        </label>
+      <% end %>
+    <% else%>
+      <%= select_tag "ad_hoc_option_values[#{ahot.id}]",
+              options_for_select(ad_hoc_option_value_options(ahot.option_values)), 
+              :include_blank => ('None' unless ahot.is_required?), :class => class_str %>
+    <% end %>
+  <% end %>
 <% end %>
 <% end # field set%> 
 </div>
