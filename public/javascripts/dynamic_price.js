@@ -14,15 +14,19 @@ function setPrice(val){
 function computePrice(){
   var newPrice = getBasePrice();
   
-  // Get the checked checkboxes (for the multiple selects)
-  $('.ad-hoc-option-select[type="checkbox"]:checked').each(function(){
-    newPrice+= parseFloat($(this).attr('price_mod'));
+  // Get the checked checkboxes and buttons
+  $('.ad-hoc-option-select:checked').each(function(){
+    if ($(this).attr('price_mod') != undefined){
+      newPrice+= parseFloat($(this).attr('price_mod'));
+    }
   });
   
-  // Get the option selects
-  $('.ad-hoc-option-select[type!="checkbox"] option:selected').each(function(){
-    newPrice+= parseFloat($(this).attr('price_mod'));
-  });
+  // // Get the option selects
+  // $('.ad-hoc-option-select[type!="checkbox"] option:selected').each(function(){
+  //   if ($(this).attr('price_mod') != undefined){
+  //     newPrice+= parseFloat($(this).attr('price_mod'));
+  //   }
+  // });
     
   setPrice(newPrice);
 }
